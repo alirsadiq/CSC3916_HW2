@@ -73,6 +73,15 @@ router.post('/signin', function (req, res) {
 });
 
 router.route('/testcollection')
+    .get(function (req, res) {
+        res.json({status: 200, msg: "Get movies", headers: req.headers, query: req.query, env: process.env.UNIQUE_KEY});
+    })
+    .post(function (req, res) {
+        res.json({status: 200, msg: "movie saved", headers: req.headers, query: req.query, env: process.env.UNIQUE_KEY});
+    })
+    .put(authJwtController.isAuthenticated, function(req, res) {
+        res.json({status: 200, msg: "movie updated", headers: req.headers, query: req.query, env: process.env.UNIQUE_KEY});
+    })
     .delete(authController.isAuthenticated, function(req, res) {
         console.log(req.body);
         res = res.status(200);
@@ -83,6 +92,7 @@ router.route('/testcollection')
         res.json(o);
     }
     )
+
     .put(authJwtController.isAuthenticated, function(req, res) {
         console.log(req.body);
         res = res.status(200);
@@ -92,7 +102,14 @@ router.route('/testcollection')
         var o = getJSONObjectForMovieRequirement(req);
         res.json(o);
     }
+
+
     );
+router.all('*', function(req, res) {
+    res.json({
+        error: "This is not a supported method please try again."
+    });
+});
 
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
